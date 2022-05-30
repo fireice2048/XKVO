@@ -80,7 +80,6 @@
  * kvoValue.isInitialNotify : YES 表示该次监听回调的是当前的值，并非变更事件，此时 kvoValue.changedNewValue 跟 kvoValue.oldValue 是相同的值
  * 当添加的observer对象销毁后，XKVO内部维持的Block将自动清理
 
-
 ### 使用 XKVOMonitor 宏
 如果想使用类似 RAC 的 RACObserve 宏的方式，那么可以使用 XKVOMonitor 宏，同样具备属性语法检测功能：
 ```c
