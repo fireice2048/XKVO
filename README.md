@@ -68,7 +68,7 @@
 4.  将监听代码添加 initialNotify:YES，
 ```c
     [XKVO xkvo_addObserver:self object:self property:@"testCount" changedBlock:^(XKVOValue * _Nonnull kvoValue) {
-        NSLog(@"监听到 testCount 属性变化 %@ %@ ==> %@", isInitialNotify ? @"初始值" : @"", kvoValue.oldValue, kvoValue.changedNewValue);
+        NSLog(@"监听到 testCount 属性变化 %@ %@ ==> %@", kvoValue.isInitialNotify ? @"是初始值" : @"", kvoValue.oldValue, kvoValue.changedNewValue);
     } initialNotify:YES];
 ```
 运行程序，会看到如下日志输出：
@@ -79,6 +79,15 @@
  * initialNotify : 初始值是否回调block通知，默认为 NO。由于iOS的KVO在监听到变化前，拿不到即将变化的新值，所以没必要实现 priorNotify
  * kvoValue.isInitialNotify : YES 表示该次监听回调的是当前的值，并非变更事件，此时 kvoValue.changedNewValue 跟 kvoValue.oldValue 是相同的值
  * 当添加的observer对象销毁后，XKVO内部维持的Block将自动清理
+
+
+### 使用 XKVOMonitor 宏
+如果想使用类似 RAC 的 RACObserve 宏的方式，那么可以使用 XKVOMonitor 宏，同样具备属性语法检测功能：
+```c
+    [XKVOMonitor(self, testCount) subscribe:^(XKVOValue * _Nonnull kvoValue) {
+        NSLog(@"监听到 testCount 属性变化 %@ ==> %@", kvoValue.oldValue, kvoValue.changedNewValue);
+    } initialNotify:NO];
+```
 
 ### 信号发送与监听
 
