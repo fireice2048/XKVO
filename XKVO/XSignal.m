@@ -84,11 +84,9 @@
 
 - (void)removeMonitorLater:(XSignalMonitor *)monitor
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.monitorArray removeObject:monitor];
-        //NSLog(@"removeMonitor %@", monitor);
-        //NSLog(@" 剩余监听者：%@", self.monitorArray);
-    });
+    [self.monitorArray removeObject:monitor];
+    //NSLog(@"removeMonitor %@", monitor);
+    //NSLog(@" 剩余监听者：%@", self.monitorArray);
 }
 
 @end

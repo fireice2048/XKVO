@@ -69,6 +69,11 @@
             NSLog(@"属性旧值：%@", kvoValue.oldValue);
             NSLog(@"是否初值：%@", @(kvoValue.isInitialNotify));
     } initialNotify:YES];
+    
+    // 使用宏定义的方式注册监听，属性名可以使用编译检查
+    [XKVOMonitor(self.topbar, goBtnClickCount) subscribe:^(XKVOValue * _Nonnull kvoValue) {
+        NSLog(@"goBtnClickCount属性值变化：%@ ==> %@", kvoValue.oldValue, kvoValue.changedNewValue);
+    } initialNotify:NO];
 }
 
 @end

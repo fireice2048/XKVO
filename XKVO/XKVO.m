@@ -72,17 +72,17 @@
         [object addObserver:self forKeyPath:property options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
     }
     
-    XSignalMonitor * monitor = [(XSignal *)_kvoSignalBlockMap[@([object hash])][property] subscribe:block observer:observer];
+    XSignal * signal = (XSignal *)_kvoSignalBlockMap[@([object hash])][property];
+    XSignalMonitor * monitor = [signal subscribe:block observer:observer];
     
-    if (initialNotify)
+    if (initialNotify && (nil != block))
     {
-        XSignal * signal = (XSignal *)_kvoSignalBlockMap[@([object hash])][property];
         id value = [object valueForKeyPath:property];
         XKVOValue * kvoValue = [[XKVOValue alloc] init];
         kvoValue.oldValue = value;
         kvoValue.changedNewValue = value;
         kvoValue.isInitialNotify = YES;
-        signal.emit(kvoValue);
+        block(kvoValue);
     }
     
     return monitor;
@@ -110,6 +110,36 @@
         kvoValue.isInitialNotify = NO;
         signal.emit(kvoValue);
     }
+}
+
+@end
+
+
+
+@interface _XMonitor ()
+
+@property (nonatomic, strong) id observer;
+@property (nonatomic, strong) id object;
+@property (nonatomic, copy) NSString * property;
+
+@end
+
+
+@implementation _XMonitor
+
+- (XSignalMonitor *)subscribe:(void (^)(XKVOValue* kvoValue))block initialNotify:(BOOL)initialNotify
+{
+    return [[XKVO sharedInstance] xkvo_addObserver:self.observer object:self.object property:self.property changedBlock:block initialNotify:initialNotify];;
+}
+
++ (_XMonitor *)xkvo_addObserver:(id)observer object:(id)object property:(NSString *)property
+{
+    _XMonitor * xmonitor = [[_XMonitor alloc] init];
+    xmonitor.observer = observer;
+    xmonitor.object = object;
+    xmonitor.property = property;
+
+    return xmonitor;
 }
 
 @end

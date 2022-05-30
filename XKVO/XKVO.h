@@ -35,4 +35,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+
+
+#define _XKVOMonitor(TARGET, KEYPATH) \
+({ \
+    (((void)(NO && ((void)TARGET.KEYPATH, NO)), # KEYPATH)); \
+    __weak id target_ = (TARGET); \
+    [_XMonitor xkvo_addObserver:self object:target_ property:@""#KEYPATH""]; \
+})
+
+#define XKVOMonitor(TARGET, KEYPATH) _XKVOMonitor(TARGET, KEYPATH)
+
+// For XKVOMonitor
+@interface _XMonitor : NSObject
+
+- (XSignalMonitor *)subscribe:(void (^)(XKVOValue* kvoValue))block initialNotify:(BOOL)initialNotify;
+
+
++ (_XMonitor *)xkvo_addObserver:(id)observer object:(id)object property:(NSString *)property;
+
+@end
+
+
 NS_ASSUME_NONNULL_END
