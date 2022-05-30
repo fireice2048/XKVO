@@ -68,10 +68,10 @@ Or, download the code, find the four files in the XKVO directory, copy XKVO.h/XK
    Listened o testCount changed 0 ==> 1
 ```
 
-4.  将监听代码添加 initialNotify:YES，
+4.  Add initialNotify:YES to the monitoring code,
 ```c
     [XKVO xkvo_addObserver:self object:self property:@"testCount" changedBlock:^(XKVOValue * _Nonnull kvoValue) {
-        NSLog(@"Listened to testCount changed %@ %@ ==> %@", isInitialNotify ? @"(initial value)" : @"", kvoValue.oldValue, kvoValue.changedNewValue);
+        NSLog(@"Listened to testCount changed %@ %@ ==> %@", kvoValue.isInitialNotify ? @"(is initial value)" : @"", kvoValue.oldValue, kvoValue.changedNewValue);
     } initialNotify:YES];
 ```
 Run the program and you will see the following log output：
@@ -83,7 +83,15 @@ Run the program and you will see the following log output：
  * kvoValue.isInitialNotify : YES indicates that the monitoring callback is the current value, not the change event. At this time, kvoValue.changedNewValue and kvoValue.oldValue are the same value
  * When the added observer object is destroyed, the Block maintained inside XKVO will be automatically cleaned up
 
-### 信号发送与监听
+### Using the XKVOMonitor macro
+If you want to use a RAC-like RACObserve macro, you can use the XKVOMonitor macro, which also has attribute syntax detection：
+```c
+    [XKVOMonitor(self, testCount) subscribe:^(XKVOValue * _Nonnull kvoValue) {
+        NSLog(@"testCount changed %@ ==> %@", kvoValue.oldValue, kvoValue.changedNewValue);
+    } initialNotify:NO];
+```
+
+### Signal sending and monitoring
 
 1.  #import  <XKVO/XKVO.h>
 ```c
